@@ -132,71 +132,82 @@ def markov_chain():
 	v = defaultdict(dict)
 	states['exit'] = State("exit",v)
 
-	i = 1
-	index = 0
-	currentState = states['start']
-	#print(currentState)
-	video_length = 60.0
 	
-	nextState = currentState
-	changed = False
-	print(currentState.n)
-	video_count  = 1.0
-	while (True):
-		if(changed == True):
-			i = 1
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		data = {"Events":{"VoDEvents":{"Name":"Video" + currentState.n, "ServiceIdentifier": "Pulp Fiction", "ServiceInstanceID":2}}}
-		j = json.dumps(data)
-		print(j)
-		try:
-		    # Connect to server and send data
-		    sock.connect((HOST, PORT))
-		    sock.sendall(j.encode())
-		    sock.send("\0".encode())
-		    sock.close()
-
-		    # Receive data from the server and shut down
-		    
-		finally:
-		    sock.close()
-		if(currentState.n == "exit"):
-			break
+	a = 0
+	while(True):
+		i = 1
 		index = 0
-		x = random.randint(0, 1000)
-		#print(x)
-		n = currentState.v
-		#print(n)
-		#		print(x)
-		for j in range(len(n)):
-				#print(index)
-				if (x >= index and x < index + n[j][1] * 1000):
-					nextState  = states[str(n[j][0])]
+		currentState = states['start']
+		#print(currentState)
+	
+		video_length = 60.0
+	
+		nextState = currentState
+		changed = False
+		print(currentState.n)
+		video_count  = 1.0
+		a = a + 1
+		with open("durations.txt", "a") as myfile:
+	   			myfile.write("\n" + "Session " + str(a))
+		#video_length = random.randint(60,3601)
+		print("video length " + str(video_length))
+		while (True):
+			if(changed == True):
+				i = 1
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			data = {"Events":{"VoDEvents":{"Name":"Video" + currentState.n, "ServiceIdentifier": "Pulp Fiction", "ServiceInstanceID":2}}}
+			j = json.dumps(data)
+			print(j)
+			try:
+			    # Connect to server and send data
+			    sock.connect((HOST, PORT))
+			    sock.sendall(j.encode())
+			    sock.send('\0'.encode())
+			    sock.close()
+
+			    # Receive data from the server and shut down
+			    
+			finally:
+			    sock.close()
+			if(currentState.n == "exit"):
+				break
+			index = 0
+			x = random.randint(0, 1000)
+			#print(x)
+			n = currentState.v
+			#print(n)
+			#		print(x)
+			for j in range(len(n)):
+					#print(index)
+					if (x >= index and x < index + n[j][1] * 1000):
+						nextState  = states[str(n[j][0])]
 					
-					changed = True
+						changed = True
 					
 						
 		
-					break 
-				else:
-					index = index + n[j][1]*1000
+						break 
+					else:
+						index = index + n[j][1]*1000
 
-		duration = sojournTime_SM(currentState.n, n)
-		#print(duration[0])
-		d = np.power(10.0, duration[0])	
-		print("duration: " + str(d))
-		while(float(i/video_length) < d):
-			i = i +1
-			#print(float(i/video_length))
-			time.sleep(1)
-			#print(i)
-			video_count = video_count + 1
-			print("video time:" + str(video_count) + "s")
-			if(float(video_count/video_length) >= 1):
-				nextState = states["exit"]
-				break
-		currentState = nextState
-		print(currentState.n)
+			duration = sojournTime_SM(currentState.n, n)
+			#print(duration[0])
+			d = np.power(10.0, duration[0])	
+			print("duration: " + str(d))
+			with open("durations.txt", "a") as myfile:
+	   			myfile.write("\n"+ "state: " + currentState.n + "\n" + "duration :" + str(d) )
+			while(float(i/video_length) < d):
+				i = i +1
+				#print(float(i/video_length))
+				time.sleep(1)
+				#print(i)
+				video_count = video_count + 1
+				print("video time:" + str(video_count) + "s")
+				if(float(video_count/video_length) >= 1):
+					nextState = states["exit"]
+					break
+			currentState = nextState
+			print(currentState.n)
 		
 
 def arrivalProcess(number_of_STB, time_range):
