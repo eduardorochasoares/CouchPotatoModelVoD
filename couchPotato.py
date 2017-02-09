@@ -139,9 +139,9 @@ def markov_chain():
 		index = 0
 		currentState = states['start']
 		#print(currentState)
-	
+
 		video_length = 60.0
-	
+
 		nextState = currentState
 		changed = False
 		print(currentState.n)
@@ -149,7 +149,7 @@ def markov_chain():
 		a = a + 1
 		with open("durations.txt", "a") as myfile:
 	   			myfile.write("\n" + "Session " + str(a))
-		#video_length = random.randint(60,3601)
+		video_length = random.randint(60,180)
 		print("video length " + str(video_length))
 		while (True):
 			if(changed == True):
@@ -181,11 +181,11 @@ def markov_chain():
 					#print(index)
 					if (x >= index and x < index + n[j][1] * 1000):
 						nextState  = states[str(n[j][0])]
-					
+				
 						changed = True
+				
 					
-						
-		
+	
 						break 
 					else:
 						index = index + n[j][1]*1000
@@ -204,7 +204,7 @@ def markov_chain():
 				video_count = video_count + 1
 				print("video time:" + str(video_count) + "s")
 				if(float(video_count/video_length) >= 1):
-					nextState = states["exit"]
+					nextState = states['exit']
 					break
 			currentState = nextState
 			print(currentState.n)
