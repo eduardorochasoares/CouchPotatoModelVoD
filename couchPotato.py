@@ -14,6 +14,9 @@ from scipy.interpolate import interp1d
 from scipy.stats import expon
 import threading
 import sys
+import json
+import socket
+
 u = 0 
 def counter():
 	global u
@@ -30,6 +33,8 @@ class State:
 		self.n = name
 		self.v = v
 def markov_chain():
+	HOST, PORT = "127.0.0.1", 6666
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	random.seed(datetime.now())
 	states = defaultdict(dict)
 	v = defaultdict(dict)
@@ -131,16 +136,32 @@ def markov_chain():
 	index = 0
 	currentState = states['start']
 	#print(currentState)
-	video_length = 180.0
+	video_length = 60.0
 	
 	nextState = currentState
 	changed = False
 	print(currentState.n)
 	video_count  = 1.0
-	while (currentState.n != "exit" or float(video_count/video_length) < 1.0):
+	while (True):
 		if(changed == True):
 			i = 1
-		
+		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		data = {"Events":{"VoDEvents":{"Name":"Video" + currentState.n, "ServiceIdentifier": "Pulp Fiction", "ServiceInstanceID":2}}}
+		j = json.dumps(data)
+		print(j)
+		try:
+		    # Connect to server and send data
+		    sock.connect((HOST, PORT))
+		    sock.sendall(j.encode())
+		    sock.send("\0".encode())
+		    sock.close()
+
+		    # Receive data from the server and shut down
+		    
+		finally:
+		    sock.close()
+		if(currentState.n == "exit"):
+			break
 		index = 0
 		x = random.randint(0, 1000)
 		#print(x)
@@ -172,6 +193,7 @@ def markov_chain():
 			video_count = video_count + 1
 			print("video time:" + str(video_count) + "s")
 			if(float(video_count/video_length) >= 1):
+				nextState = states["exit"]
 				break
 		currentState = nextState
 		print(currentState.n)
@@ -284,8 +306,8 @@ def sojournTime_SM(state, n):
 	print(a(0))
 	plt.xlim((-5,0))
 	'''
-	plt.plot(x, y2)
-	plt.show()
+	#plt.plot(x, y2)
+	#plt.show()
 	return y
 	#return p(t)             
 	
