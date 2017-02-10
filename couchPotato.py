@@ -134,7 +134,7 @@ def markov_chain():
 
 	
 	a = 0
-	while(True):
+	while(a < 10):
 		i = 1
 		index = 0
 		currentState = states['start']
@@ -155,7 +155,7 @@ def markov_chain():
 			if(changed == True):
 				i = 1
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			data = {"Events":{"VoDEvents":{"Name":"Video" + currentState.n, "ServiceIdentifier": "Pulp Fiction", "ServiceInstanceID":2}}}
+			data = {"Events":{"VoDEvents":{"Name":"Video" + currentState.n, "ServiceIdentifier": "video"+str(video_length), "ServiceInstanceID":2}}}
 			j = json.dumps(data)
 			print(j)
 			try:
