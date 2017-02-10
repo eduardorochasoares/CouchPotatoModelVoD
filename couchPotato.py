@@ -149,7 +149,7 @@ def markov_chain():
 		a = a + 1
 		with open("durations.txt", "a") as myfile:
 	   			myfile.write("\n" + "Session " + str(a))
-		video_length = random.randint(60,180)
+		#video_length = random.randint(60,3600)
 		print("video length " + str(video_length))
 		while (True):
 			if(changed == True):
