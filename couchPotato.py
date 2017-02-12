@@ -155,14 +155,14 @@ def markov_chain():
 			if(changed == True):
 				i = 1
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			data = {"Events":{"VoDEvents":{"Name":"Video" + currentState.n, "ServiceIdentifier": "video"+str(video_length), "ServiceInstanceID":2}}}
-			j = json.dumps(data)
-			print(j)
+			data = "{\"Events\":{\"VoDEvents\":{\"Name\":\"Video" + currentState.n +"\", \"ServiceIdentifier\": \"" + "video"+str(video_length)+"\"" + ", \"ServiceInstanceID\":2}}}"
+			
+			print(data)
 			try:
 			    # Connect to server and send data
 			    sock.connect((HOST, PORT))
-			    sock.sendall(j.encode())
-			    sock.send('\0'.encode())
+			    sock.sendall(data.encode())
+			    sock.sendall('\0'.encode())
 			    sock.close()
 
 			    # Receive data from the server and shut down
